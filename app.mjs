@@ -12,13 +12,11 @@ const port = 3000;
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-// Routes
 app.use("/upload_img", uploadRoutes);
 app.use("/create", humidityRoutes);
 app.use("/roboflow", roboflowRoutes);
 
 
-// Jalankan server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+app.listen(port, function() {
+    console.log("Server running on http://localhost:" + port);
 });
