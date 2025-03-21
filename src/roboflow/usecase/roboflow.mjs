@@ -1,32 +1,42 @@
-import fs from "fs"
+import { response } from "express";
 import roboflowRequest from "../service/roboflowReq.mjs";
-import pool from "../../config/database.mjs";
 
-const imageExample = async () => {
-  const res = await pool.query("select nama_foto from foto limit 1");
-
-  console.log(res);
-}
+import "dotenv/config";
 
 const roboflowHandler = async (req, res) => {
-
   try {
-    // const imgBuffer = req.body.image;
-   
-    await imageExample();
-    
-    // const response = await roboflowRequest(process.env.MAIN_URL, imgBuffer);
+    const imgId = req.headers["x-image-id"];
 
-    // console.log(response.data);
+    if (!imgId) {
+      console.log("failed, no metadata headers");
+      return;
+    }
 
-    res.send("OK");
+    const buffer = req.body;
 
+    if (!buffer) {
+      console.log("failed, no image buffer attached");
+      return;
+    }
+
+    // Covnert image buffer to string with ecoding base64
+    const base64Img = buffer.toString("base64");
+
+    const roboflowRes = await roboflowRequest(process.env.MAIN_URL, base64Img);
+
+    const response = {
+      image_id: imgId,
+      roboflow: roboflowRes,
+    };
+
+    res.status(200).json({
+      data: response,
+    });
   } catch (err) {
     res.status(400).json({
-      message: err.message
-    })
+      message: err.message,
+    });
   }
 };
 
 export default roboflowHandler;
-

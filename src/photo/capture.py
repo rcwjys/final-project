@@ -36,4 +36,4 @@ if __name__ == "__main__":
        photo_path = capture_photo()  # Ambil foto dan simpan pathnya
        time.sleep(5)  # Tunggu sebentar biar file tersimpan dengan baik
        upload_photo(photo_path)  # Upload ke database
-       time.sleep(3600) # Tunggu 1 jam sebelum ambil foto lagi
+       time.sleep(86400) # Tunggu 1 jam sebelum ambil foto lagi
