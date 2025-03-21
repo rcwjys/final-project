@@ -1,20 +1,16 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import express from "express";
+import bodyParser from "body-parser";
+import uploadRoutes from "./src/photo/upload.js";
+import humidityRoutes from "./src/humidity/create.js";
 
-const uploadRoutes = require("./src/photo/upload");
-const humidityRoutes = require("./src/humidity/create");
+var app = express();
+var port = 3000;
 
-const app = express();
-const port = 3000;
-
-// Middleware
 app.use(bodyParser.json());
 
-// Routes
 app.use("/upload_img", uploadRoutes);
 app.use("/create", humidityRoutes);
 
-// Jalankan server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+app.listen(port, function() {
+    console.log("Server running on http://localhost:" + port);
 });

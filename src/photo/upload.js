@@ -1,35 +1,56 @@
-const express = require("express");
-const multer = require("multer");
-const pool = require("../config/database");
+import express from "express";
+import multer from "multer";
+import pool from "../config/database.js";
 
-const router = express.Router();
+var router = express.Router();
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
 
-// Konfigurasi multer buat nyimpen file di memori dulu
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-// Endpoint untuk menyimpan gambar dalam bentuk BLOB
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", upload.single("image"), function(req, res) {
     try {
-        const { idRak } = req.body;
-        if (!req.file || !idRak) return res.status(400).send("Invalid data");
+        var id_rak = req.body.id_rak;
+        if (!req.file || !id_rak) return res.status(400).send("Invalid data");
 
-        const imageBuffer = req.file.buffer;
-        const now = new Date();
-        const offset = now.getTimezoneOffset() * 60000; // Konversi offset ke milidetik
-        const localTime = new Date(now - offset).toISOString().slice(0, 19).replace("T", " ");
+        var imageBuffer = req.file.buffer;
+        var now = new Date();
+        var offset = now.getTimezoneOffset() * 60000;
+        var localTime = new Date(now - offset).toISOString().slice(0, 19).replace("T", " ");
 
-
-        const result = await pool.query(
-            "INSERT INTO foto (img, idRak, timestamp) VALUES ($1, $2, $3) RETURNING id",
-            [imageBuffer, idRak, localTime]
-        );
-
-        res.json({ message: "File uploaded successfully", id: result.rows[0].id });
+        pool.query(
+            "INSERT INTO foto (nama_foto, id_rak, timestamp) VALUES ($1, $2, $3) RETURNING id_foto",
+            [imageBuffer, id_rak, localTime]
+        ).then(function(result) {
+            res.json({ message: "File uploaded successfully", id: result.rows[0].id_foto });
+        }).catch(function(error) {
+            console.error(error);
+            res.status(500).send("Failed to upload file");
+        });
     } catch (error) {
         console.error(error);
         res.status(500).send("Failed to upload file");
     }
 });
 
-module.exports = router;
+router.get("/:id", function(req, res) {
+    try {
+        var id = req.params.id;
+        pool.query("SELECT nama_foto FROM foto WHERE id_foto = $1", [id])
+            .then(function(result) {
+                if (result.rows.length === 0) {
+                    return res.status(404).send("Gambar tidak ditemukan");
+                }
+                var imageBuffer = result.rows[0].nama_foto;
+                res.set("Content-Type", "image/jpeg");
+                res.send(imageBuffer);
+            })
+            .catch(function(error) {
+                console.error(error);
+                res.status(500).send("Gagal mengambil gambar");
+            });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Gagal mengambil gambar");
+    }
+});
+
+export default router;
