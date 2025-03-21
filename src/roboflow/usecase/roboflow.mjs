@@ -1,16 +1,23 @@
 import fs from "fs"
 import roboflowRequest from "../service/roboflowReq.mjs";
+import pool from "../../config/database.mjs";
+
+const imageExample = async () => {
+  const res = await pool.query("select nama_foto from foto limit 1");
+
+  console.log(res);
+}
 
 const roboflowHandler = async (req, res) => {
 
   try {
-    const imgBuffer = req.body.image;
+    // const imgBuffer = req.body.image;
+   
+    await imageExample();
     
-    console.log(imgBuffer)
-    
-    const response = await roboflowRequest(process.env.MAIN_URL, imgBuffer);
+    // const response = await roboflowRequest(process.env.MAIN_URL, imgBuffer);
 
-    console.log(response.data);
+    // console.log(response.data);
 
     res.send("OK");
 
