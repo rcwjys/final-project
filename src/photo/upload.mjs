@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import pool from "../config/database.js";
+import pool from "../config/database.mjs";
 
 var router = express.Router();
 var storage = multer.memoryStorage();

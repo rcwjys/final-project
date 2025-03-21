@@ -1,23 +1,20 @@
 import roboflowRoutes from "./src/roboflow/api/roboflowApi.mjs"
-import bodyParser from "body-parser";
-import uploadRoutes from "./src/photo/upload.js";
-import humidityRoutes from "./src/humidity/create.js";
+import uploadRoutes from "./src/photo/upload.mjs";
+import humidityRoutes from "./src/humidity/create.mjs";
 
-import express from "express"
-
-const uploadRoutes = require("./src/photo/upload");
-const humidityRoutes = require("./src/humidity/create");
+import express, { raw } from "express"
 
 const app = express();
 const port = 3000;
 
 // Middleware
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(raw({type: 'image/*', limit: '10mb'}));
 
 app.use("/upload_img", uploadRoutes);
 app.use("/create", humidityRoutes);
-app.use("/roboflow", roboflowRoutes);
+app.use("/", roboflowRoutes);
 
 
 app.listen(port, function() {

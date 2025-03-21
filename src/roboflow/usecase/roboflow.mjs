@@ -1,9 +1,12 @@
+import fs from "fs"
 import roboflowRequest from "../service/roboflowReq.mjs";
 
 const roboflowHandler = async (req, res) => {
 
   try {
-    const imgBuffer = req.body.image.toString("base64");
+    const imgBuffer = req.body.image;
+    
+    console.log(imgBuffer)
     
     const response = await roboflowRequest(process.env.MAIN_URL, imgBuffer);
 
@@ -12,8 +15,9 @@ const roboflowHandler = async (req, res) => {
     res.send("OK");
 
   } catch (err) {
-    console.log(err);
-    throw err;
+    res.status(400).json({
+      message: err.message
+    })
   }
 };
 
