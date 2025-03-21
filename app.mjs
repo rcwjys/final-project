@@ -1,4 +1,7 @@
 import roboflowRoutes from "./src/roboflow/api/roboflowApi.mjs"
+import bodyParser from "body-parser";
+import uploadRoutes from "./src/photo/upload.js";
+import humidityRoutes from "./src/humidity/create.js";
 
 import express from "express"
 
