@@ -1,11 +1,15 @@
-const { Pool } = require("pg");
+import pkg from "pg";
+var Pool = pkg.Pool;
 
-const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "test",
-    password: "123",
-    port: 5432,
+var pool = new Pool({
+    user: "avnadmin",
+    host: "1d0ba700-hpcolokkodok-0c9e.europe-west1-a.aivencloud.com",
+    database: "defaultdb",
+    password: "",
+    port: 26778,
+    ssl: {
+        rejectUnauthorized: false,
+    },
 });
 
-module.exports = pool;
+export default pool;
