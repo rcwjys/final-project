@@ -1,11 +1,12 @@
 import roboflowRoutes from "./src/roboflow/api/roboflowApi.mjs";
 import uploadRoutes from "./src/photo/upload.mjs";
 import humidityRoutes from "./src/humidity/create.mjs";
+import "dotenv/config";
 
 import express, { raw } from "express";
 
 const app = express();
-const port = 3000;
+const port = process.env.APP_PORT;
 
 // Middleware
 app.use(express.json());
