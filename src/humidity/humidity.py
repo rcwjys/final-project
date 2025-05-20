@@ -22,42 +22,34 @@ def read_sensor():
                 return suhu, kelembapan
 
             print("Data sensor kosong, coba lagi...")
+            time.sleep(2)
         except RuntimeError as e:
             print(f"Error membaca sensor: {e}, coba lagi...")
         time.sleep(2)  # Tunggu sebelum baca ulang
 
 def tentukan_keadaan_aksi(suhu, kelembapan):
     """Menentukan keadaan dan aksi sesuai aturan"""
-    if suhu <= 25.9:
-        keadaan_suhu = "Rendah"
-        aksi_suhu = "Nyalakan Lampu"
-    elif 26 <= suhu <= 28:
-        keadaan_suhu = "Normal"
-        aksi_suhu = "-"
-    else:
-        keadaan_suhu = "Tinggi"
-        aksi_suhu = "Penyiraman"
-
-    if kelembapan <= 79.9:
-        keadaan_kelembapan = "Rendah"
-        aksi_kelembapan = "Siram"
-    elif 80 <= kelembapan <= 90:
-        keadaan_kelembapan = "Normal"
-        aksi_kelembapan = "-"
-    else:
-        keadaan_kelembapan = "Tinggi"
-        aksi_kelembapan = "Nyalakan Lampu"
-
-    # Menentukan aksi berdasarkan kombinasi suhu & kelembapan
-    if keadaan_suhu == "Rendah" and keadaan_kelembapan == "Tinggi":
-        keadaan = "Suhu Rendah & Kelembapan Tinggi"
-        aksi = "Nyalakan Lampu"
-    elif keadaan_suhu == "Tinggi" and keadaan_kelembapan == "Rendah":
+    if 26 <= suhu <= 28 and 80 <= kelembapan <= 90:
+        keadaan = "Normal"
+        aksi = "Tidak Ada Aksi"
+    elif suhu > 28 and kelembapan < 80:
+        keadaan = "Suhu Tinggi dan Kelembapan Rendah"
         aksi = "Penyiraman"
-        keadaan = "Suhu Tinggi & Kelembapan Rendah"
-    else:
-        aksi = "Tidak Ada"
-        keadaan = "Tidak Ada"
+    elif suhu < 26 and kelembapan > 90:
+        keadaan = "Suhu Rendah dan Kelembapan Tinggi"
+        aksi = "Nyalakan Lampu"
+    elif suhu < 26 and kelembapan < 80:
+        keadaan = "Suhu Rendah dan Kelembapan Rendah"
+        aksi = "Tidak Ada Aksi"
+    elif suhu > 28 and kelembapan < 80:
+        keadaan = "Suhu Tinggi dan Kelembapan Rendah"
+        aksi = "Tidak Ada Aksi"
+    elif 26 <= suhu <= 28 and kelembapan < 80:
+        keadaan = "Suhu Normal dan Kelembapan Rendah"
+        aksi = "Tidak Ada Aksi"
+    elif suhu < 26 and 80 <= kelembapan <= 90:
+        keadaan = "Suhu Rendah dan Kelembapan Normal"
+        aksi = "Tidak Ada Aksi"
 
     return keadaan, aksi
 
@@ -81,10 +73,10 @@ def send_to_server(suhu, kelembapan, keadaan, aksi):
         print(f"Error request: {e}")
 
 if __name__ == "__main__":
-    while True:
+    #while True:
         suhu, kelembapan = read_sensor()
         keadaan, aksi = tentukan_keadaan_aksi(suhu, kelembapan)
         if suhu is not None and kelembapan is not None:
             send_to_server(suhu, kelembapan, keadaan, aksi)
-        time.sleep(1800)  # 30 menit
+        #time.sleep(1800)  # 30 menit
         # time.sleep(60)  # Untuk testing, bisa diganti ke 30 menit (1800 detik) saat deploy
